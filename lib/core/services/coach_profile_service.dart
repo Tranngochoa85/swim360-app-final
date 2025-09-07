@@ -13,7 +13,7 @@ class CoachProfileService {
     final token = await _storage.read(key: 'access_token');
     
     // Thêm dòng print để kiểm tra giá trị token
-    print('Token is being sent: $token');
+    // print('Token is being sent: $token');
 
     if (token == null) {
       throw Exception('Người dùng chưa đăng nhập hoặc không tìm thấy token');
@@ -36,10 +36,10 @@ class CoachProfileService {
         throw Exception(errorData['detail'] ?? 'Gửi hồ sơ thất bại');
       }
       
-      print('Hồ sơ đã được tạo thành công!');
+      // print('Hồ sơ đã được tạo thành công!');
 
     } catch (e) {
-      print('Lỗi khi tạo hồ sơ: $e');
+      // print('Lỗi khi tạo hồ sơ: $e');
       throw Exception('Không thể gửi hồ sơ. Vui lòng thử lại.');
     }
   }

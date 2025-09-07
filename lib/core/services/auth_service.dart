@@ -20,14 +20,14 @@ class AuthService {
         }),
       );
     } catch (e) {
-      print('Network error during login: $e');
+      // print('Network error during login: $e');
       throw Exception('Không thể kết nối đến server. Vui lòng thử lại.');
     }
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final token = data['access_token'];
-      print('Login Successful! Token fetched.');
+      // print('Login Successful! Token stored.');
       
       // THAY ĐỔI 2: Trả về token, không lưu trữ ở đây nữa
       return token;
