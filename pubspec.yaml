@@ -1,0 +1,49 @@
+name: swim360_app
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Thư viện để gọi API
+  http: ^1.5.0
+  
+  # Thư viện mặc định cho icon iOS
+  cupertino_icons: ^1.0.2
+
+  # --- PHẦN THÊM VÀO CHO I18N ---
+  flutter_localizations:
+    sdk: flutter
+  intl: 0.20.2 # Bắt buộc phải có thư viện này
+  provider: ^6.1.5+1
+  flutter_secure_storage: ^9.2.4
+  # -----------------------------------
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+# --- PHẦN GỘP LẠI CHÍNH XÁC ---
+flutter:
+  uses-material-design: true
+  generate: true # Bật tính năng sinh mã cho i18n
+# ---------------------------------
+
+  # Để thêm assets, bỏ comment các dòng sau:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
+
+  # Để thêm fonts, bỏ comment các dòng sau:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
