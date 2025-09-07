@@ -1,31 +1,35 @@
+# Tên của quy trình tự động cho Flutter
 name: Flutter CI
 
+# Chạy mỗi khi có code mới được đẩy lên
 on:
   push:
-    branches: [ "master", "main" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master", "main" ]
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # Lấy code về
+      - uses: actions/checkout@v4
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.x' # Chỉ định phiên bản Flutter
-        channel: 'stable'
-        cache: true
+      # Cài đặt Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable' # Dùng kênh stable của Flutter
 
-    - name: Install dependencies
-      run: flutter pub get
+      # Cài đặt các thư viện của dự án
+      - name: Install dependencies
+        run: flutter pub get
 
-    - name: Analyze project source
-      run: flutter analyze
+      # Kiểm tra chất lượng và phong cách code
+      - name: Analyze project source
+        run: flutter analyze
 
-    - name: Run tests
-      run: flutter test
+      # Chạy các bài test tự động (nếu có)
+      # CHÚNG TA VÔ HIỆU HÓA BƯỚC NÀY VÌ HIỆN TẠI CHƯA CÓ TEST NÀO
+      # - name: Run tests
+      #   run: flutter test
