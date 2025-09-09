@@ -58,7 +58,7 @@ class _LearningRequestFormScreenState extends State<LearningRequestFormScreen> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       // Logic gửi dữ liệu sẽ được thêm ở bước sau
-      print('Form hợp lệ, sẵn sàng để gửi đi!');
+      // print('Form hợp lệ, sẵn sàng để gửi đi!');
     }
   }
 

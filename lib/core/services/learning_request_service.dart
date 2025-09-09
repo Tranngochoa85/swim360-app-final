@@ -29,10 +29,10 @@ class LearningRequestService {
         throw Exception(errorData['detail'] ?? 'Tạo yêu cầu thất bại');
       }
       
-      print('Yêu cầu học bơi đã được tạo thành công!');
+      // print('Yêu cầu học bơi đã được tạo thành công!');
 
     } catch (e) {
-      print('Lỗi khi tạo yêu cầu học bơi: $e');
+      // print('Lỗi khi tạo yêu cầu học bơi: $e');
       throw Exception('Không thể gửi yêu cầu. Vui lòng thử lại.');
     }
   }
