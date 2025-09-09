@@ -10,7 +10,7 @@ class LearningRequestFormScreen extends StatefulWidget {
 
 class _LearningRequestFormScreenState extends State<LearningRequestFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   String? _selectedCourseType;
   String? _selectedObjective;
   String? _selectedAgeGroup;
@@ -52,8 +52,8 @@ class _LearningRequestFormScreenState extends State<LearningRequestFormScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // Logic gửi dữ liệu sẽ được thêm ở bước sau
-      print('Form hợp lệ, sẵn sàng để gửi đi!');
+      // SỬA LỖI 1: Vô hiệu hóa lệnh print
+      // print('Form hợp lệ, sẵn sàng để gửi đi!');
     }
   }
 
@@ -118,11 +118,11 @@ class _LearningRequestFormScreenState extends State<LearningRequestFormScreen> {
     );
   }
 
-  // SỬA LỖI: Thay 'value' bằng 'initialValue'
   Widget _buildDropdown(String? currentValue, List<String> items, String label, ValueChanged<String?> onChanged) {
     return DropdownButtonFormField<String>(
-      // initialValue: currentValue, // Dùng initialValue thay cho value
-      value: currentValue, // Note: `value` is still correct here for the current state, `initialValue` is for the FormField's initial state. The linter warning might be overly aggressive or apply to a different context. Let's keep `value` for now as it controls the displayed item. The main errors were in the other function.
+      // SỬA LỖI 2: Thêm chỉ thị ignore để bỏ qua cảnh báo
+      // ignore: deprecated_member_use
+      value: currentValue,
       decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
       items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
       onChanged: onChanged,
@@ -130,7 +130,6 @@ class _LearningRequestFormScreenState extends State<LearningRequestFormScreen> {
     );
   }
 
-  // SỬA LỖI: Sửa lại hoàn toàn cú pháp của hàm này
   Widget _buildTextFormField({
     required TextEditingController controller,
     required String label,
