@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:swim360_app/core/services/offer_service.dart';
-import 'package:swim360_app/features/learning_request/models/learning_request_model.dart';
-import 'package:swim360_app/features/offer/models/offer_model.dart';
+import 'package:swim3G0_app/core/services/offer_service.dart';
+import 'package:swim3G0_app/features/learning_request/models/learning_request_model.dart';
+import 'package:swim3G0_app/features/offer/models/offer_model.dart';
 
 class OffersListScreen extends StatefulWidget {
   final LearningRequest learningRequest;
@@ -24,6 +24,9 @@ class _OffersListScreenState extends State<OffersListScreen> {
   Future<void> _acceptOffer(String offerId) async {
     try {
       await _offerService.acceptOffer(offerId);
+      
+      // SỬA LỖI 1: Kiểm tra `mounted` trước khi dùng context
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Chấp nhận ưu đãi thành công!'), backgroundColor: Colors.green),
       );
@@ -32,6 +35,8 @@ class _OffersListScreenState extends State<OffersListScreen> {
         _offersFuture = _offerService.getOffersForRequest(widget.learningRequest.id);
       });
     } catch (e) {
+      // SỬA LỖI 2: Kiểm tra `mounted` trước khi dùng context
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
       );
@@ -41,7 +46,8 @@ class _OffersListScreenState extends State<OffersListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Ưu Đãi Cho Yêu Cầu')),
+      // SỬA LỖI 3: Thêm `const` để tối ưu hóa
+      appBar: AppBar(title: const Text('Ưu Đãi Cho Yêu Cầu')),
       body: FutureBuilder<List<CourseOffer>>(
         future: _offersFuture,
         builder: (context, snapshot) {
