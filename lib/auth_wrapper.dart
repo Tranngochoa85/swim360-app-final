@@ -11,7 +11,6 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
 
-    // Dựa vào trạng thái isAuthenticated để quyết định hiển thị màn hình nào
     if (authProvider.isAuthenticated) {
       return const DashboardScreen();
     } else {

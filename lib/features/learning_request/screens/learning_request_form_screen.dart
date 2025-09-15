@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swim360_app/core/services/learning_request_service.dart';
 
 class LearningRequestFormScreen extends StatefulWidget {
   const LearningRequestFormScreen({super.key});
@@ -9,10 +10,11 @@ class LearningRequestFormScreen extends StatefulWidget {
 }
 
 class _LearningRequestFormScreenState extends State<LearningRequestFormScreen> {
-  // ... (toàn bộ code cũ trong State class giữ nguyên) ...
-
   final _formKey = GlobalKey<FormState>();
   
+  final _requestService = LearningRequestService();
+  bool _isLoading = false;
+
   String? _selectedCourseType;
   String? _selectedObjective;
   String? _selectedAgeGroup;
@@ -52,9 +54,53 @@ class _LearningRequestFormScreenState extends State<LearningRequestFormScreen> {
     }
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
+    // Ẩn bàn phím trước khi xử lý
+    FocusScope.of(context).unfocus();
+
     if (_formKey.currentState!.validate()) {
-      // Logic đã chuyển sang service
+      if (_selectedTime == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Vui lòng chọn thời gian học'), backgroundColor: Colors.red),
+        );
+        return;
+      }
+
+      setState(() { _isLoading = true; });
+
+      try {
+        final requestData = {
+          "course_type": _selectedCourseType,
+          "course_objective": _selectedObjective,
+          "age_group": _selectedAgeGroup,
+          "sessions_per_week": int.parse(_sessionsPerWeekController.text),
+          "preferred_days": _preferredDaysController.text.split(',').map((e) => e.trim()).toList(),
+          "preferred_time": "${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}:00",
+          "session_duration": int.parse(_sessionDurationController.text),
+          "num_adults": int.parse(_numAdultsController.text),
+          "num_children": int.parse(_numChildrenController.text),
+          "notes": _notesController.text,
+        };
+        
+        await _requestService.createRequest(requestData);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Tạo yêu cầu thành công!'), backgroundColor: Colors.green),
+          );
+          Navigator.of(context).pop();
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() { _isLoading = false; });
+        }
+      }
     }
   }
 
@@ -79,25 +125,23 @@ class _LearningRequestFormScreenState extends State<LearningRequestFormScreen> {
                 _buildDropdown(_selectedAgeGroup, _ageGroups, 'Độ tuổi (*)', (val) => setState(() => _selectedAgeGroup = val)),
                 const SizedBox(height: 16),
                 
-                _buildTextFormField(controller: _sessionsPerWeekController, label: 'Số buổi / tuần (*)'),
+                // SỬA LỖI: Thêm keyboardType cho các trường số
+                _buildTextFormField(controller: _sessionsPerWeekController, label: 'Số buổi / tuần (*)', keyboardType: TextInputType.number),
                 const SizedBox(height: 16),
                 _buildTextFormField(controller: _preferredDaysController, label: 'Ngày học mong muốn (*) (cách nhau bởi dấu phẩy)'),
                 const SizedBox(height: 16),
-                _buildTextFormField(controller: _sessionDurationController, label: 'Thời lượng / buổi (phút) (*)'),
+                _buildTextFormField(controller: _sessionDurationController, label: 'Thời lượng / buổi (phút) (*)', keyboardType: TextInputType.number),
                 const SizedBox(height: 16),
-                _buildTextFormField(controller: _numAdultsController, label: 'Số lượng người lớn (*)'),
+                 _buildTextFormField(controller: _numAdultsController, label: 'Số lượng người lớn (*)', keyboardType: TextInputType.number),
                 const SizedBox(height: 16),
-                _buildTextFormField(controller: _numChildrenController, label: 'Số lượng trẻ em (*)'),
+                 _buildTextFormField(controller: _numChildrenController, label: 'Số lượng trẻ em (*)', keyboardType: TextInputType.number),
                 const SizedBox(height: 16),
                 _buildTextFormField(controller: _notesController, label: 'Ghi chú thêm', isRequired: false, maxLines: 3),
                 const SizedBox(height: 16),
                 
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                    side: BorderSide(color: Colors.grey.shade600)
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4), side: BorderSide(color: Colors.grey.shade600)),
                   title: Text(_selectedTime == null ? '  Chọn thời gian học (*)' : '  Thời gian học: ${_selectedTime!.format(context)}'),
                   trailing: const Icon(Icons.access_time),
                   onTap: _selectTime,
@@ -105,11 +149,9 @@ class _LearningRequestFormScreenState extends State<LearningRequestFormScreen> {
                 const SizedBox(height: 32),
 
                 ElevatedButton(
-                  onPressed: _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Text('Gửi Yêu Cầu'),
+                  onPressed: _isLoading ? null : _submitForm,
+                  style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+                  child: _isLoading ? const CircularProgressIndicator(color: Colors.white) : const Text('Gửi Yêu Cầu'),
                 ),
               ],
             ),
@@ -119,7 +161,6 @@ class _LearningRequestFormScreenState extends State<LearningRequestFormScreen> {
     );
   }
 
-  // SỬA LỖI 4: Thêm lại `ignore`
   Widget _buildDropdown(String? currentValue, List<String> items, String label, ValueChanged<String?> onChanged) {
     return DropdownButtonFormField<String>(
       // ignore: deprecated_member_use
@@ -131,13 +172,7 @@ class _LearningRequestFormScreenState extends State<LearningRequestFormScreen> {
     );
   }
 
-  Widget _buildTextFormField({
-    required TextEditingController controller,
-    required String label,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
-    bool isRequired = true,
-  }) {
+  Widget _buildTextFormField({required TextEditingController controller, required String label, TextInputType keyboardType = TextInputType.text, int maxLines = 1, bool isRequired = true}) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),

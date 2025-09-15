@@ -5,6 +5,7 @@ import 'package:swim360_app/features/coach_profile/screens/coach_profile_form_sc
 import 'package:swim360_app/features/learning_request/screens/discover_requests_screen.dart';
 import 'package:swim360_app/features/learning_request/screens/learning_request_form_screen.dart';
 import 'package:swim360_app/features/learning_request/screens/my_requests_screen.dart'; // Import màn hình mới
+import 'package:swim360_app/features/course/screens/my_courses_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -63,6 +64,15 @@ class DashboardScreen extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50), backgroundColor: Colors.green),
                 child: const Text('Tạo Yêu cầu Học bơi'),
+              ),
+              const SizedBox(height: 16),
+              
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MyCoursesScreen())); // Sửa thành màn hình MyCoursesScreen
+  },
+                style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50), backgroundColor: Colors.green),
+                child: const Text('Quản lý Khóa học'),
               ),
             ],
           ),

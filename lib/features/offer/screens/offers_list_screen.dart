@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-// SỬA LỖI: Sửa lại 'swim3G0_app' thành 'swim360_app' ở các dòng import dưới đây
 import 'package:swim360_app/core/services/offer_service.dart';
 import 'package:swim360_app/features/learning_request/models/learning_request_model.dart';
 import 'package:swim360_app/features/offer/models/offer_model.dart';
+import 'package:swim360_app/features/payment/screens/payment_confirmation_screen.dart'; // Import màn hình mới
 
 class OffersListScreen extends StatefulWidget {
   final LearningRequest learningRequest;
@@ -22,18 +22,14 @@ class _OffersListScreenState extends State<OffersListScreen> {
     _offersFuture = _offerService.getOffersForRequest(widget.learningRequest.id);
   }
 
-  Future<void> _acceptOffer(String offerId) async {
+  Future<void> _acceptOffer(CourseOffer offer) async {
     try {
-      await _offerService.acceptOffer(offerId);
-      
+      await _offerService.acceptOffer(offer.id);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Chấp nhận ưu đãi thành công!'), backgroundColor: Colors.green),
-      );
-      // Tải lại trang để cập nhật trạng thái
-      setState(() {
-        _offersFuture = _offerService.getOffersForRequest(widget.learningRequest.id);
-      });
+      // Sau khi chấp nhận thành công, điều hướng đến màn hình thanh toán
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => PaymentConfirmationScreen(offer: offer),
+      ));
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -49,6 +45,7 @@ class _OffersListScreenState extends State<OffersListScreen> {
       body: FutureBuilder<List<CourseOffer>>(
         future: _offersFuture,
         builder: (context, snapshot) {
+          // ... (Code FutureBuilder giữ nguyên) ...
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -70,9 +67,11 @@ class _OffersListScreenState extends State<OffersListScreen> {
                   trailing: offer.status == 'sent'
                       ? ElevatedButton(
                           child: const Text('Chấp nhận'),
-                          onPressed: () => _acceptOffer(offer.id),
+                          onPressed: () => _acceptOffer(offer),
                         )
-                      : null,
+                      : (offer.status == 'accepted' 
+                          ? const Chip(label: Text('Đã chấp nhận'), backgroundColor: Colors.greenAccent)
+                          : null),
                 ),
               );
             },

@@ -20,12 +20,12 @@ class AuthProvider with ChangeNotifier {
   Future<void> login(String token) async {
     _token = token;
     await _storage.write(key: 'access_token', value: token);
-    notifyListeners(); // Thông báo cho "người gác cổng" rằng trạng thái đã thay đổi
+    notifyListeners();
   }
 
   Future<void> logout() async {
     _token = null;
     await _storage.delete(key: 'access_token');
-    notifyListeners(); // Thông báo trạng thái thay đổi
+    notifyListeners();
   }
 }

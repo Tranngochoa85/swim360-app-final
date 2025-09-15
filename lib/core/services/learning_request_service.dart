@@ -3,12 +3,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:swim360_app/features/learning_request/models/learning_request_model.dart';
 
-// Đảm bảo tất cả các hàm đều nằm bên trong cặp ngoặc nhọn {} của class này
 class LearningRequestService {
   static const String _baseUrl = 'http://10.0.2.2:8000/api/v1';
   final _storage = const FlutterSecureStorage();
 
-  // Hàm tạo yêu cầu (của Lát cắt 2)
   Future<void> createRequest(Map<String, dynamic> requestData) async {
     final token = await _storage.read(key: 'access_token');
     if (token == null) {
@@ -36,7 +34,6 @@ class LearningRequestService {
     }
   }
 
-  // Hàm khám phá yêu cầu (của Lát cắt 3)
   Future<List<LearningRequest>> discoverRequests() async {
     final token = await _storage.read(key: 'access_token');
     if (token == null) {
@@ -66,7 +63,6 @@ class LearningRequestService {
     }
   }
 
-  // Hàm lấy yêu cầu của chính người dùng
   Future<List<LearningRequest>> getMyRequests() async {
     final token = await _storage.read(key: 'access_token');
     if (token == null) throw Exception('Chưa đăng nhập');

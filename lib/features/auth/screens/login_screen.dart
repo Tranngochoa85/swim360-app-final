@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:swim360_app/core/providers/auth_provider.dart';
 import 'package:swim360_app/core/services/auth_service.dart';
+import 'package:swim360_app/features/auth/screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,39 +14,26 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  
-  // Tạo một instance của AuthService để sử dụng
   final AuthService _authService = AuthService();
-
-  // Biến để quản lý trạng thái loading
   bool _isLoading = false;
 
-  // Hàm xử lý logic đăng nhập đã được cập nhật
   Future<void> _login() async {
-    // Ẩn bàn phím
     FocusScope.of(context).unfocus();
-
-    // Bật trạng thái loading
-    setState(() {
-      _isLoading = true;
-    });
-
+    setState(() { _isLoading = true; });
     try {
-      // Dùng authService để lấy token
+      // Bước 1: Gọi service để lấy token
       final token = await _authService.login(
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
       
-      // Dùng Provider để thông báo cho "người gác cổng" về trạng thái đăng nhập mới
-      // context.read<T>() là cách gọi tắt của Provider.of<T>(context, listen: false)
-      // Chúng ta dùng nó ở đây vì chỉ cần gọi hàm, không cần widget này phải build lại.
+      // SỬA LỖI: Bước 2: Dùng token nhận được để thông báo cho AuthProvider
+      // Hành động này sẽ kích hoạt AuthWrapper chuyển sang màn hình Dashboard
       if (mounted) {
         context.read<AuthProvider>().login(token);
       }
 
     } catch (e) {
-      // Nếu có lỗi, hiển thị SnackBar
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -55,11 +43,9 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } finally {
-      // Tắt trạng thái loading dù thành công hay thất bại
+      // Bước 3: Tắt loading dù thành công hay thất bại
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() { _isLoading = false; });
       }
     }
   }
@@ -85,39 +71,35 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Ô nhập liệu cho Email
                 TextFormField(
                   controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
                   keyboardType: TextInputType.emailAddress,
                 ),
-                const SizedBox(height: 16), // Khoảng cách giữa các widget
-
-                // Ô nhập liệu cho Mật khẩu
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Mật khẩu',
-                    border: OutlineInputBorder(),
-                  ),
-                  obscureText: true, // Ẩn mật khẩu
+                  decoration: const InputDecoration(labelText: 'Mật khẩu', border: OutlineInputBorder()),
+                  obscureText: true,
                 ),
                 const SizedBox(height: 24),
-
-                // Nút bấm Đăng nhập
                 ElevatedButton(
-                  // Vô hiệu hóa nút khi đang loading, nếu không thì gọi hàm _login
                   onPressed: _isLoading ? null : _login,
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50), // Nút rộng hết màn hình
+                    minimumSize: const Size(double.infinity, 50),
                   ),
-                  // Hiển thị vòng xoay loading hoặc chữ tùy vào trạng thái _isLoading
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
+                  child: _isLoading 
+                      ? const CircularProgressIndicator(color: Colors.white) 
                       : const Text('Đăng Nhập'),
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                    );
+                  },
+                  child: const Text('Chưa có tài khoản? Đăng ký ngay'),
                 ),
               ],
             ),

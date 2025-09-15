@@ -22,6 +22,7 @@ dependencies:
   intl: 0.20.2 # Bắt buộc phải có thư viện này
   provider: ^6.1.5+1
   flutter_secure_storage: ^9.2.4
+  webview_flutter: ^4.13.0
   # -----------------------------------
 
 dev_dependencies:
